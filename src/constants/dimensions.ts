@@ -3,10 +3,10 @@ export const DIMENSIONS = {
   // Touch targets (accessibility minimum)
   touchTargetMin: 64,
 
-  // Tile dimensions - DOBLE tamaño para adultos mayores
-  tileWidth: 160,
-  tileHeight: 212,
-  tileDepth: 16, // 3D layer offset
+  // Tile dimensions - NORMALES (tamaño real de ficha de mahjong)
+  tileWidth: 80,
+  tileHeight: 106,
+  tileDepth: 8, // 3D layer offset
 
   // Tile spacing
   tileMargin: 6,

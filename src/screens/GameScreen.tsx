@@ -1,6 +1,6 @@
 // Game Screen - Main game board
 import React, { useEffect, useCallback, useRef } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { COLORS } from '../constants/colors';
 import { DIMENSIONS } from '../constants/dimensions';
@@ -23,6 +23,7 @@ export default function GameScreen() {
     score,
     elapsedSeconds,
     status,
+    draggingTileId,
     startLevel,
     selectTile,
     pause,
@@ -30,8 +31,9 @@ export default function GameScreen() {
     tick,
     gameOver,
     reset,
+    moveTile,
   } = useGameState();
-  
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   
   // Start level on mount
@@ -74,6 +76,12 @@ export default function GameScreen() {
       selectTile(tileId);
     }
   }, [status, selectTile]);
+
+  const handleTileMove = useCallback((tileId: string, row: number, col: number) => {
+    if (status === 'playing') {
+      moveTile(tileId, row, col);
+    }
+  }, [status, moveTile]);
   
   const handlePause = useCallback(() => {
     pause();
@@ -117,6 +125,9 @@ export default function GameScreen() {
           tiles={tiles}
           selectedTileId={selectedTileId}
           onTilePress={handleTilePress}
+          onTileMove={handleTileMove}
+          gameStatus={status}
+          draggingTileId={draggingTileId}
         />
       </View>
 

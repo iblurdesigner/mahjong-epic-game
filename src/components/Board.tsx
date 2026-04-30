@@ -23,85 +23,102 @@ function BoardComponent({
   onTileMove,
   gameStatus = 'playing',
   draggingTileId = null,
-}: BoardProps) {
+}: BoardProps) {  
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   
-  // Calculate scale to fit board in screen
-  const boardWidth = 14 * (DIMENSIONS.tileWidth + DIMENSIONS.tileMargin);
-  const boardHeight = 9 * (DIMENSIONS.tileHeight + DIMENSIONS.tileMargin);
+  // Calculate board dimensions FROM ACTUAL TILES
+  const maxCol = tiles.length > 0
+    ? Math.max(...tiles.map(t => t.position.col))
+    : 13;
+  const maxRow = tiles.length > 0
+    ? Math.max(...tiles.map(t => t.position.row))
+    : 7;
   
-  const scaleX = (screenWidth - DIMENSIONS.boardPadding * 2 - 60) / boardWidth;
-  const scaleY = (screenHeight - 200) / boardHeight;
-  const scale = Math.min(scaleX, scaleY, 1); // No bigger than 1
+  // Base dimensions (without scale)
+  const baseTileWidth = DIMENSIONS.tileWidth;
+  const baseTileHeight = DIMENSIONS.tileHeight;
+  const margin = DIMENSIONS.tileMargin;
+  const layerOffsetX = DIMENSIONS.layerOffsetX;
+  const layerOffsetY = DIMENSIONS.layerOffsetY;
   
-  // Calculate tile positions with 3D offset
+  // Calculate board size at scale 1
+  const baseBoardWidth = (maxCol + 1) * (baseTileWidth + margin) + (3 * layerOffsetX) + DIMENSIONS.boardPadding * 2;
+  const baseBoardHeight = (maxRow + 1) * (baseTileHeight + margin) + (3 * layerOffsetY) + DIMENSIONS.boardPadding * 2;
+  
+  // Calculate scale to fit screen (with padding for scroll)
+  const availableWidth = screenWidth - DIMENSIONS.screenPadding * 2;
+  const availableHeight = screenHeight - 200; // Reserve space for header
+  const scaleX = availableWidth / baseBoardWidth;
+  const scaleY = availableHeight / baseBoardHeight;
+  const scale = Math.min(scaleX, scaleY, 1); // Never upscale beyond 1
+  
+  // Apply scale to dimensions
+  const tileWidth = baseTileWidth * scale;
+  const tileHeight = baseTileHeight * scale;
+  const scaledMargin = margin * scale;
+  const scaledLayerOffsetX = layerOffsetX * scale;
+  const scaledLayerOffsetY = layerOffsetY * scale;
+  
+  // Calculate final board dimensions
+  const boardWidth = baseBoardWidth * scale;
+  const boardHeight = baseBoardHeight * scale;
+  
+  // Calculate tile positions
   const positionedTiles = useMemo(() => {
     return tiles
       .filter(t => !t.isRemoved)
       .map(tile => {
-        const { row, col, layer } = tile.position;
-        
+        const { row, col, layer } = tile.position;      
         return {
           tile,
-          left: (col * (DIMENSIONS.tileWidth + DIMENSIONS.tileMargin) + layer * DIMENSIONS.layerOffsetX) * scale,
-          top: (row * (DIMENSIONS.tileHeight + DIMENSIONS.tileMargin) + layer * DIMENSIONS.layerOffsetY) * scale,
+          left: (col * (tileWidth + scaledMargin)) + (layer * scaledLayerOffsetX) + DIMENSIONS.boardPadding * scale,
+          top: (row * (tileHeight + scaledMargin)) + (layer * scaledLayerOffsetY) + DIMENSIONS.boardPadding * scale,
           zIndex: layer * 100 + row,
           isUnlocked: checkUnlocked(tile, tiles),
           isSelected: tile.id === selectedTileId,
         };
       })
       .sort((a, b) => a.zIndex - b.zIndex);
-  }, [tiles, selectedTileId, scale]);
-
-  const scaledBoardWidth = boardWidth * scale + DIMENSIONS.boardPadding * 2;
-  const scaledBoardHeight = boardHeight * scale + DIMENSIONS.boardPadding * 2;
+  }, [tiles, selectedTileId, scale, tileWidth, tileHeight, scaledMargin, scaledLayerOffsetX, scaledLayerOffsetY]);
 
   return (
-    <View style={styles.container}>
-      <View 
-        style={[
-          styles.board, 
-          { 
-            width: scaledBoardWidth, 
-            height: scaledBoardHeight,
-          }
-        ]}
-      >
-        {positionedTiles.map(({ tile, left, top, zIndex, isUnlocked, isSelected }) => (
-          <View
-            key={tile.id}
-            style={[
-              styles.tileWrapper,
-              { left, top, zIndex },
-            ]}
-          >
-            <TileComponent
-              tile={tile}
-              isUnlocked={isUnlocked}
-              isSelected={isSelected}
-              onPress={onTilePress}
-              onMove={onTileMove}
-              gameStatus={gameStatus}
-              boardWidth={scaledBoardWidth}
-              boardHeight={scaledBoardHeight}
-              scale={scale}
-            />
-          </View>
-        ))}
-      </View>
+    <View 
+      style={[
+        styles.board, 
+        { 
+          width: boardWidth, 
+          height: boardHeight,
+        }
+      ]}
+    >
+      {positionedTiles.map(({ tile, left, top, zIndex, isUnlocked, isSelected }) => (
+        <View
+          key={tile.id}
+          style={[
+            styles.tileWrapper,
+            { left, top, zIndex },
+          ]}
+        >
+          <TileComponent
+            tile={tile}
+            isUnlocked={isUnlocked}
+            isSelected={isSelected}
+            onPress={onTilePress}
+            onMove={onTileMove}
+            gameStatus={gameStatus}
+            boardWidth={boardWidth}
+            boardHeight={boardHeight}
+            scale={scale}
+          />
+        </View>
+      ))}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   board: {
     position: 'relative',
-    padding: DIMENSIONS.boardPadding,
     backgroundColor: COLORS.backgroundSecondary,
     borderRadius: 16,
   },

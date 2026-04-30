@@ -18,6 +18,8 @@ export function useGameState() {
     status: state.status,
     levelConfig: state.levelConfig,
     draggingTileId: state.draggingTileId,
+    scale: 1, // Default scale for iPadOS (will be calculated in GameScreen)
+
     
     // Actions
     startLevel: (config: LevelConfig) => {
