@@ -1,8 +1,7 @@
-// Mahjong Tile Component - Simple flex tile
-import React, { memo, useState, useRef, useCallback } from 'react';
-import { Pressable, Text, View, StyleSheet } from 'react-native';
+// Mahjong Tile Component - Fits exactly in iPad screen
+import React, { memo } from 'react';
+import { Pressable, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../constants/colors';
-import { DIMENSIONS } from '../constants/dimensions';
 import type { Tile } from '../types';
 
 interface TileProps {
@@ -10,42 +9,37 @@ interface TileProps {
   isUnlocked: boolean;
   isSelected: boolean;
   onPress: (tileId: string) => void;
-  onMove?: (tileId: string, row: number, col: number) => void;
   gameStatus?: 'idle' | 'playing' | 'paused' | 'gameover' | 'won';
-  scale?: number;
 }
+
+// SIZE PARA 6x6 GRID EN IPAD - todovisible sin scroll
+const TILE_WIDTH = 90;
+const TILE_HEIGHT = 120;
+const SYMBOL_SIZE = 56;
 
 function TileComponent({ 
   tile, 
   isUnlocked, 
   isSelected, 
   onPress, 
-  onMove,
   gameStatus = 'playing',
-  scale = 1,
 }: TileProps) {
-  // Simple press handler
   const handlePress = () => {
     if (isUnlocked && gameStatus === 'playing') {
       onPress(tile.id);
     }
   };
 
-  // Parse symbol for display
   const symbolParts = tile.symbol.split('-');
   const suit = symbolParts[0];
   const value = symbolParts[1] || '';
   
   const getSymbolDisplay = () => {
     switch (suit) {
-      case 'DOTS':
-        return getDotsDisplay(value);
-      case 'BAMBOO':
-        return getBambooDisplay(value);
-      case 'CHARACTER':
-        return getCharacterDisplay(value);
-      default:
-        return value;
+      case 'DOTS': return getDotsDisplay(value);
+      case 'BAMBOO': return getBambooDisplay(value);
+      case 'CHARACTER': return getCharacterDisplay(value);
+      default: return value;
     }
   };
 
@@ -83,10 +77,10 @@ function getCharacterDisplay(value: string): string {
 
 const styles = StyleSheet.create({
   tileBody: {
-    width: 60,
-    height: 80,
+    width: TILE_WIDTH,
+    height: TILE_HEIGHT,
     backgroundColor: COLORS.tileBackground,
-    borderRadius: 6,
+    borderRadius: 8,
     borderWidth: 2,
     borderColor: COLORS.tileBorder,
     justifyContent: 'center',
@@ -104,7 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.tileSelected,
   },
   symbol: {
-    fontSize: 28,
+    fontSize: SYMBOL_SIZE,
     color: COLORS.textPrimary,
   },
   locked: {

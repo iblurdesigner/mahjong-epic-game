@@ -1,6 +1,6 @@
-// Game Board Component - Simple flex-wrap layout
+// Game Board Component - All visible, no scroll
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import { COLORS } from '../constants/colors';
 import { DIMENSIONS } from '../constants/dimensions';
 import { Tile as TileType } from '../types';
@@ -11,21 +11,28 @@ interface BoardProps {
   tiles: TileType[];
   selectedTileId: string | null;
   onTilePress: (tileId: string) => void;
-  onTileMove?: (tileId: string, row: number, col: number) => void;
   gameStatus?: 'idle' | 'playing' | 'paused' | 'gameover' | 'won';
-  draggingTileId?: string | null;
 }
 
 function BoardComponent({ 
   tiles, 
   selectedTileId, 
   onTilePress, 
-  onTileMove,
   gameStatus = 'playing',
-  draggingTileId = null,
 }: BoardProps) {
-  // Simple flex layout - tiles flow automatically
-  const activeTiles = tiles.filter(t => !t.isRemoved);
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  
+  // Calcular grid que entra en pantalla
+  // Header ~150px, Board padding ~32px
+  const availableHeight = screenHeight - 250;
+  const availableWidth = screenWidth - 64;
+  
+  // 90x120 + margin 4 = 94x124 por celda
+  const cols = Math.floor(availableWidth / 94);
+  const rows = Math.floor(availableHeight / 124);
+  const maxVisible = cols * rows;
+  
+  const activeTiles = tiles.filter(t => !t.isRemoved).slice(0, maxVisible);
 
   return (
     <View style={styles.board}>
@@ -40,9 +47,7 @@ function BoardComponent({
             isUnlocked={isUnlocked}
             isSelected={isSelected}
             onPress={onTilePress}
-            onMove={onTileMove}
             gameStatus={gameStatus}
-            scale={1}
           />
         );
       })}
