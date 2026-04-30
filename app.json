@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Mahjong Epic",
+    "slug": "mahjong-epic",
+    "version": "1.0.0",
+    "orientation": "landscape",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "mahjongepic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#fdf9f4"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mahjongepic.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#fdf9f4"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
