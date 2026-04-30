@@ -1,0 +1,70 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  Tech stack: React Native 0.76.5 + Expo SDK 52 (NEW project)
+  Architecture: Blank Expo project - patterns to be defined
+  Testing: Jest 29.x + jest-expo + @testing-library/react-native
+  Target: iPadOS (hybrid mode - engram + openspec files)
+  Design System: Celestial Jade (Jade Green #14422d, Rosewood, Ivory #fdf9f4)
+  Audience: Seniors (accessibility focus - 64px minimum touch target)
+
+strict_tdd: true
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected components/screens
+  specs:
+    - Use Given/When/Then format for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+    - Include accessibility requirements for senior audience
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group tasks by phase (infrastructure, implementation, testing)
+    - Use hierarchical numbering (1.1, 1.2, etc.)
+    - Keep tasks small enough to complete in one session
+  apply:
+    - Follow React Native + Expo best practices
+    - Use functional components with hooks
+    tdd: true
+    test_command: "npm test"
+  verify:
+    test_command: "npm test"
+    build_command: "npx expo export"
+    coverage_threshold: 80
+  archive:
+    - Warn before merging destructive deltas (large removals)
+
+testing:
+  runner:
+    command: "npm test"
+    framework: "Jest 29.x + jest-expo"
+  layers:
+    - layer: "Unit"
+      available: true
+      tool: "Jest"
+    - layer: "Integration"
+      available: true
+      tool: "@testing-library/react-native"
+    - layer: "E2E"
+      available: false
+      tool: "Not installed"
+  coverage:
+    available: true
+    command: "npm test -- --coverage"
+  tools:
+    - tool: "Linter"
+      available: true
+      command: "npm run lint"
+      name: "ESLint 8.x"
+    - tool: "Type Checker"
+      available: true
+      command: "tsc --noEmit"
+      name: "TypeScript 5.3"
+    - tool: "Formatter"
+      available: false
+      command: "Not configured"
+      name: "—"

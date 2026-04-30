@@ -1,0 +1,35 @@
+change: drag-drop-tiles
+phase: archive
+status: completed
+created: 2026-04-30
+updated: 2026-04-30
+archived: 2026-04-30
+artifacts:
+  - type: design
+    path: openspec/changes/drag-drop-tiles/design.md
+    topic_key: sdd/drag-drop-tiles/design
+    status: saved
+  - type: tasks
+    path: openspec/changes/drag-drop-tiles/tasks.md
+    topic_key: sdd/drag-drop-tiles/tasks
+    status: saved
+  - type: apply-progress
+    path: (saved in engram)
+    topic_key: sdd/drag-drop-tiles/apply-progress
+    status: saved
+  - type: verify-report
+    path: openspec/changes/drag-drop-tiles/verify-report.md
+    topic_key: sdd/drag-drop-tiles/verify-report
+    status: saved
+  - type: archive-report
+    path: openspec/changes/drag-drop-tiles/archive-report.md
+    topic_key: sdd/drag-drop-tiles/archive-report
+    status: saved
+dependencies:
+  - sdd/drag-drop-tiles/proposal
+  - sdd/drag-drop-tiles/spec
+  - sdd/drag-drop-tiles/design
+  - sdd/drag-drop-tiles/tasks
+  - sdd/drag-drop-tiles/apply-progress
+  - sdd/drag-drop-tiles/verify-report
+next_phase: none
